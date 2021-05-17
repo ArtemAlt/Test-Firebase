@@ -17,6 +17,11 @@ public class ApplicationController {
     private final FireBaseService service;
     private final FireBaseAuthService authService;
 
+    @GetMapping("/")
+    public String sayHello(){
+        return "Hello";
+    }
+
 
     @GetMapping("/checkToken")
     public String checkToken(@RequestHeader() String token) throws FirebaseAuthException, ExecutionException, InterruptedException {
