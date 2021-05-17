@@ -16,14 +16,16 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class FireBaseService {
     private static final String NAME_COLLECTION = "users";
-    private final Firestore dbFirestore = FirestoreClient.getFirestore();
+
 
     public String saveUser(Person person) throws ExecutionException, InterruptedException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> collectionApi = dbFirestore.collection(NAME_COLLECTION).document(person.getName()).set(person);
         return collectionApi.get().getUpdateTime().toString();
     }
 
     public Person getPersonDetails(String name) throws ExecutionException, InterruptedException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference dr = dbFirestore.collection(NAME_COLLECTION).document(name);
         ApiFuture<DocumentSnapshot> future = dr.get();
         DocumentSnapshot document = future.get();
@@ -34,6 +36,7 @@ public class FireBaseService {
         }
     }
     public String updatePersonDetails (Person person) throws ExecutionException, InterruptedException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference dr = dbFirestore.collection(NAME_COLLECTION).document(person.getName());
         ApiFuture<DocumentSnapshot> future = dr.get();
         DocumentSnapshot document = future.get();
@@ -46,6 +49,7 @@ public class FireBaseService {
     }
 
     public String deleteUser(String name) throws ExecutionException, InterruptedException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference dr = dbFirestore.collection(NAME_COLLECTION).document(name);
         ApiFuture<DocumentSnapshot> future = dr.get();
         DocumentSnapshot document = future.get();
