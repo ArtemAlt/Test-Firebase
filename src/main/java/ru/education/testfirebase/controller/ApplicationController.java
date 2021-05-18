@@ -9,6 +9,7 @@ import ru.education.testfirebase.entity.Person;
 import ru.education.testfirebase.service.FireBaseAuthService;
 import ru.education.testfirebase.service.FireBaseService;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -22,9 +23,13 @@ public class ApplicationController {
         return "Hello";
     }
 
+    @GetMapping("/sendMsg")
+    public String sendMsg(@RequestHeader() String token)  {
+        return authService.sendPushMessage(token);
+    }
 
     @GetMapping("/checkToken")
-    public String checkToken(@RequestHeader() String token) throws FirebaseAuthException, ExecutionException, InterruptedException {
+    public String checkToken(@RequestHeader() String token) throws FirebaseAuthException {
         return authService.checkToken(token);
     }
 
@@ -37,6 +42,11 @@ public class ApplicationController {
     public String createUserByPhoneNumber(@RequestHeader() String phone, @RequestHeader() String email) throws FirebaseAuthException, FirebaseMessagingException {
         return authService.createNewAuthUser(phone,email);
 
+    }
+
+    @GetMapping("/getAll")
+    public List<String> getAllUser() throws FirebaseAuthException {
+        return authService.getAll();
     }
 
 

@@ -1,20 +1,24 @@
 package ru.education.testfirebase.service;
 
-import com.google.api.client.json.webtoken.JsonWebSignature;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.auth.UserRecord;
-import com.google.firebase.auth.internal.FirebaseCustomAuthToken;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.education.testfirebase.FireBaseInitializer;
 
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class FireBaseAuthService {
+
 
     public String createNewAuthUser(String number,String email) throws FirebaseAuthException {
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -51,5 +55,39 @@ public class FireBaseAuthService {
         UserRecord record=  auth.getUser(uid);
         System.out.println("Create token for uid - "+ record.toString());
         return auth.createCustomToken(uid);
+    }
+
+    public String sendPushMessage(String token){
+        FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+      Notification n = Notification.builder().setTitle("Test title").setBody("Teset message body").build();
+      Message m = Message.builder().setToken(token).setNotification(n).build();
+        try {
+            messaging.send(m);
+
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+        }
+        return "Message send to uid";
+    }
+
+    public List<String> getAll() throws FirebaseAuthException {
+        ListUsersPage page = FirebaseAuth.getInstance().listUsers(null);
+        List<String> result = new ArrayList<>();
+        while (page != null) {
+            for (ExportedUserRecord user : page.getValues()) {
+                System.out.println("User: " + user.getUid());
+                result.add(user.getUid());
+            }
+            page = page.getNextPage();
+        }
+
+// Iterate through all users. This will still retrieve users in batches,
+// buffering no more than 1000 users in memory at a time.
+        page = FirebaseAuth.getInstance().listUsers(null);
+        for (ExportedUserRecord user : page.iterateAll()) {
+            System.out.println("User: " + user.getUid());
+            result.add(user.getUid());
+        }
+        return result;
     }
 }
