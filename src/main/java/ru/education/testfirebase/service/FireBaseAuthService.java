@@ -8,6 +8,7 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.education.testfirebase.FireBaseInitializer;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FireBaseAuthService {
 
 
@@ -30,9 +32,11 @@ public class FireBaseAuthService {
                 .setDisabled(false);
         UserRecord userRecord = auth.createUser(request);
 
+
 //        Message message = Message.builder().setToken(userRecord.getTenantId()).build();
 //        messaging.send(message);
-        return "Successfully created new user: " + userRecord.getUid();
+        log.info("Successfully created new user: " + userRecord.getUid());
+        return userRecord.getUid();
     }
     public boolean verificationToken(String token){
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -53,13 +57,13 @@ public class FireBaseAuthService {
     public String createToken(String uid) throws FirebaseAuthException {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         UserRecord record=  auth.getUser(uid);
-        System.out.println("Create token for uid - "+ record.toString());
+        log.info("Create token for uid - "+ record.toString());
         return auth.createCustomToken(uid);
     }
 
     public String sendPushMessage(String token){
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();
-      Notification n = Notification.builder().setTitle("Test title").setBody("Teset message body").build();
+      Notification n = Notification.builder().setTitle("Test title").setBody("Test message body").build();
       Message m = Message.builder().setToken(token).setNotification(n).build();
         try {
             messaging.send(m);
