@@ -49,16 +49,7 @@ public class FireBaseAuthService {
     public String createToken(String uid) throws FirebaseAuthException {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         UserRecord record=  auth.getUser(uid);
-        System.out.println(record.toString());
-        record.getPhoneNumber();
-        JsonWebSignature.Header header = new JsonWebSignature.Header();
-
-        FirebaseCustomAuthToken.Payload payload = new FirebaseCustomAuthToken.Payload();
-        payload.setUid(uid);
-        byte[] signatureBytes= {1,1,1,1,1,1};
-        byte[] signedContentBytes = {2,2,2,2,2,2};
-        FirebaseCustomAuthToken token = new FirebaseCustomAuthToken(header,payload, signatureBytes,signedContentBytes);
-
-        return token.toString();
+        System.out.println("Create token for uid - "+ record.toString());
+        return auth.createCustomToken(uid);
     }
 }
